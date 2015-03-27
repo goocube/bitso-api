@@ -60,7 +60,8 @@ describe('Bitso private unit tests', function() {
   });
   describe('bitso.user_transactions', function () {
     it('should return user transactions', function (done) {
-      bitso.user_transactions(function (err, data) {
+      var options = {};
+      bitso.user_transactions(options, function (err, data) {
         console.log('data: ' + JSON.stringify(data));
         if (err) return done(err);
         

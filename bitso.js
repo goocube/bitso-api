@@ -60,9 +60,8 @@ Bitso.prototype.postReq = function(action, callback, params) {
 				callback(new Error('Could not understand response from server: ' + body), null);
 				return;
 			}
-      // console.log(data);
-      // console.log(JSON.stringify(response));
-			if(data.error && data.error.length && (data.error === 'Invalid nonce' || data.error === 'Invalid signature' || data.errpr === 'API key not found')) {
+      
+			if(data.error && data.error.length && (data.error === 'Invalid nonce' || data.error === 'Invalid signature' || data.error === 'API key not found')) {
 				callback(new Error(data.error), null);
 			} else {
 				callback(null, data);
