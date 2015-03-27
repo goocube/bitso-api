@@ -2,23 +2,24 @@ var _ = require('underscore');
 var request	= require('request');
 var crypto = require('crypto');
 
-var Bitstamp = function(key, secret, client_id) {
+var Bitso = function(key, secret, client_id) {
   this.key = key;
   this.secret = secret;
   this.client_id = client_id;
-  this.timeoutMS = 5000;
+  this.timeoutMS = 10000;
 
-  this.url = 'https://www.bitstamp.net';
+  this.url = 'https://api.bitso.com';
+  this.version = '/v2/';
 
-  _.bindAll(this, 'postReq', 'getReq', 'transactions', 'ticker', 'order_book', 'eur_usd', 'balance', 'user_transactions', 'open_orders', 'cancel_order', 'buy', 'sell', 'withdrawal_requests', 'bitcoin_withdrawal', 'bitcoin_deposit_address', 'unconfirmed_btc', 'ripple_withdrawal', 'ripple_address');
+  _.bindAll(this, 'postReq', 'getReq', 'transactions', 'ticker', 'order_book', 'balance', 'user_transactions', 'open_orders', 'cancel_order', 'buy', 'sell', 'withdrawal_requests', 'bitcoin_withdrawal', 'bitcoin_deposit_address', 'unconfirmed_btc', 'ripple_withdrawal', 'ripple_address');
 };
 
-Bitstamp.prototype.postReq = function(action, callback, params) {
+Bitso.prototype.postReq = function(action, callback, params) {
 	// Set custom User-Agent string
   var headers = [];
-	headers['User-Agent'] = 'Bitstamp Javascript API Client';
+	headers['User-Agent'] = 'Bitso Javascript API Client';
 
-  var path = '/api/' + action + '/';
+  var path = this.version + action + '/';
 
   if(!this.key || !this.secret || !this.client_id)
     return callback('Must provide key, secret and client ID to make this API request.');
@@ -59,7 +60,8 @@ Bitstamp.prototype.postReq = function(action, callback, params) {
 				callback(new Error('Could not understand response from server: ' + body), null);
 				return;
 			}
-
+      // console.log(data);
+      // console.log(JSON.stringify(response));
 			if(data.error && data.error.length && (data.error === 'Invalid nonce' || data.error === 'Invalid signature' || data.errpr === 'API key not found')) {
 				callback(new Error(data.error), null);
 			} else {
@@ -72,12 +74,12 @@ Bitstamp.prototype.postReq = function(action, callback, params) {
 	return req;
 };
 
-Bitstamp.prototype.getReq = function(action, callback, params) {
+Bitso.prototype.getReq = function(action, callback, params) {
   // Set custom User-Agent string
   var headers = [];
-  headers['User-Agent'] = 'Bitstamp Javascript API Client';
+  headers['User-Agent'] = 'Bitso Javascript API Client';
 
-  var path = '/api/' + action + '/';
+  var path = this.version + action + '/';
 
   var options = {
     url: this.url + path,
@@ -118,7 +120,7 @@ Bitstamp.prototype.getReq = function(action, callback, params) {
 // Public Functions
 //
 
-Bitstamp.prototype.transactions = function(options, callback) {
+Bitso.prototype.transactions = function(options, callback) {
   if(!callback) {
     callback = options;
     options = undefined;
@@ -126,11 +128,11 @@ Bitstamp.prototype.transactions = function(options, callback) {
   this.getReq('transactions', callback, options);
 };
 
-Bitstamp.prototype.ticker = function(callback) {
+Bitso.prototype.ticker = function(callback) {
   this.getReq('ticker', callback);
 };
 
-Bitstamp.prototype.order_book = function(group, callback) {
+Bitso.prototype.order_book = function(group, callback) {
   if(!callback) {
     callback = group;
     group = undefined;
@@ -138,64 +140,64 @@ Bitstamp.prototype.order_book = function(group, callback) {
   this.getReq('order_book', callback, {group: group});
 };
 
-Bitstamp.prototype.eur_usd = function(callback) {
-  this.getReq('eur_usd', callback);
-};
-
 //
 // Private Functions
 //
 
-Bitstamp.prototype.balance = function(callback) {
+Bitso.prototype.balance = function(callback) {
   this.postReq('balance', callback);
 };
 
-Bitstamp.prototype.user_transactions = function(timedelta, callback) {
+Bitso.prototype.user_transactions = function(options, callback) {
   if(!callback) {
-    callback = timedelta;
-    timedelta = undefined;
+    callback = options;
+    options = undefined;
   }
-  this.postReq('user_transactions', callback, {timedelta: timedelta});
+  this.postReq('user_transactions', callback, options);
 };
 
-Bitstamp.prototype.open_orders = function(callback) {
+Bitso.prototype.open_orders = function(callback) {
   this.postReq('open_orders', callback);
 };
 
-Bitstamp.prototype.cancel_order = function(id, callback) {
+Bitso.prototype.cancel_order = function(id, callback) {
   this.postReq('cancel_order', callback, {id: id});
 };
 
-Bitstamp.prototype.buy = function(amount, price, callback) {
+Bitso.prototype.lookup_order = function(id, callback) {
+  this.postReq('lookup_order', callback, {id: id});
+};
+
+Bitso.prototype.buy = function(amount, price, callback) {
   this.postReq('buy', callback, {amount: amount, price: price});
 };
 
-Bitstamp.prototype.sell = function(amount, price, callback) {
+Bitso.prototype.sell = function(amount, price, callback) {
   this.postReq('sell', callback, {amount: amount, price: price});
 };
 
-Bitstamp.prototype.withdrawal_requests = function(callback) {
+Bitso.prototype.withdrawal_requests = function(callback) {
   this.postReq('withdrawal_requests', callback);
 };
 
-Bitstamp.prototype.bitcoin_withdrawal = function(amount, address, callback) {
+Bitso.prototype.bitcoin_withdrawal = function(amount, address, callback) {
   this.postReq('bitcoin_withdrawal', callback, {amount: amount, address: address});
 };
 
-Bitstamp.prototype.bitcoin_deposit_address = function(callback) {
+Bitso.prototype.bitcoin_deposit_address = function(callback) {
   this.postReq('bitcoin_deposit_address', callback);
 };
 
-Bitstamp.prototype.unconfirmed_btc = function(callback) {
+Bitso.prototype.unconfirmed_btc = function(callback) {
   this.postReq('unconfirmed_btc', callback);
 };
 
-Bitstamp.prototype.ripple_withdrawal = function(amount, address, currency, callback) {
+Bitso.prototype.ripple_withdrawal = function(amount, address, currency, callback) {
   this.postReq('ripple_withdrawal', callback, {amount: amount, address: address, currency: currency});
 };
 
-Bitstamp.prototype.ripple_address = function(callback) {
+Bitso.prototype.ripple_address = function(callback) {
   this.postReq('ripple_address', callback);
 };
 
-module.exports = Bitstamp;
+module.exports = Bitso;

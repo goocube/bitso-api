@@ -1,24 +1,28 @@
 {
-  "name": "bitstamp-api",
+  "name": "bitso-api",
   "version": "0.1.9",
-  "description": "Bitstamp API Client for Node.JS",
-  "main": "bitstamp.js",
+  "description": "Bitso API Client for Node.JS",
+  "main": "bisto.js",
   "dependencies": {
     "request": ">=2.40.0",
     "underscore": ">=1.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "*",
+    "sinon": "*",
+    "should": "*"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha -t 10000"
   },
   "keywords": [
-    "bitstamp",
+    "bisto",
     "api"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/5an1ty/bitstamp-api"
+    "url": "https://github.com/etennetatur/bisto-api"
   },
-  "author": "Ruben Callewaert",
+  "author": "Etienne Tatur forked from Ruben Callewaert project",
   "license": "MIT"
 }
