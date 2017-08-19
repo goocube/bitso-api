@@ -8,7 +8,7 @@ var Bitso = function(key, secret, client_id) {
   this.client_id = client_id;
   this.timeoutMS = 10000;
 
-  this.url = 'https://api.bitso.com';
+  this.url = 'https://api-dev.bitso.com/';
   this.version = '/v3/';
 
   _.bindAll(this, 'postReq', 'getReq', 'transactions', 'ticker', 'order_book', 'balance', 'user_transactions', 'open_orders', 'cancel_order', 'buy', 'sell', 'withdrawal_requests', 'bitcoin_withdrawal', 'bitcoin_deposit_address', 'unconfirmed_btc', 'ripple_withdrawal', 'ripple_address');
